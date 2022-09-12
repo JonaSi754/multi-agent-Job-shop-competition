@@ -8,14 +8,14 @@ RL performed much more better and widely in game, other than production in reali
 why not construct a game for JSP, where Jobs are players and Machines are obstacles. I believe that will be
 interesting.
 
----
+
 ## Progress
 
 
 Till now, I am still trying to realize my idea. (20220912)
 
 
----
+
 ## Contact me
 Contact with me if you are also interested in this idea.
 My email: sijinghua@hust.edu.cn
