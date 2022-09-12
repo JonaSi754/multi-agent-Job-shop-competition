@@ -169,4 +169,5 @@ class MAJspEnv():
         # collect reward if it is thie Last agent to act
         if self._agent_selector.is_last():
             # reward for all agents are placed in the .reward dictionary
-            # [self.rewards[self.agents[i]] for i in range(len(self.jobs))] = self.pygame.evaluate()
+            for agent in self.agents:
+                self.rewards[agent] = PyGame2D.evaluate(agent)
