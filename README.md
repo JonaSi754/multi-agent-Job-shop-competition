@@ -12,7 +12,7 @@ interesting.
 ## Progress
 
 
-Till now, I am still trying to realize my idea. (20220912)
+Till now, I am still trying to realize my idea. (20220912)<br>
 I choose pygame to visualize the whole progress, and use pettingZoo to implement multi agent env
 
 
