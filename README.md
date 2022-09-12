@@ -1,5 +1,5 @@
-# multi-agent-Job-shop-competition
----
+# multi-agent-Job-shop-competition (MAJSPC)
+
 ## Purpose
 
 
