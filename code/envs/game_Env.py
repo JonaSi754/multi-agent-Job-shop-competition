@@ -32,7 +32,7 @@ def env():
 
 
 
-class MAJspEnv():
+class MAJspEnv(AECEnv):
     """Construct an env for multi agent JSP
     
     Each job is considered as an agent and they compete
@@ -49,7 +49,7 @@ class MAJspEnv():
         "render_fps": 5,
     }
     
-    def __init__(self, jobs, map_size, minimap_mode, reward_args, max_cycles, extra_features):
+    def __init__(self, jobs):
         """
         The init method takes in environment arguments and
          should define the following attributes:
@@ -62,15 +62,19 @@ class MAJspEnv():
         
         self.pygame = PyGame2D()
         self.jobs = jobs
+        self.num_agents = len(jobs)
         self.possible_agents = ["Job_" + str(j) for j in range(len(jobs))]
         self.agent_name_mapping = dict(
             zip(self.possible_agents, list(range(len(self.possible_agents))))
         )
         
-        
+        # define action and observation spaces
         # Gym spaces are defined here: https://gym.openai.com/docs/#spaces
         self._action_spaces = {agent: Discrete(20) for agent in self.possible_agents}
-        self._observation_spaces = {agent: Discrete(4) for agent in self.possible_agents}
+        self._observation_spaces = {agent: Discrete(11) for agent in self.possible_agents}
+        # define the global space of environment or state
+        self.state_space = Discrete(7)
+        
     
     
     # this cache ensures that same space object is returned for the same agent
@@ -128,7 +132,9 @@ class MAJspEnv():
         self.infos = {agent: {} for agent in self.agents}
         self.state = {agent: None for agent in self.agents}
         self.observations = {agent: None for agent in self.agents}
-        self.num_moves = 0
+        del self.pygame
+        self.pygame = PyGame2D()
+        
         """
         Agent_selector utility allows easy cyclic stepping through the agents list.
         """
@@ -142,7 +148,7 @@ class MAJspEnv():
         np.random.seed(seed)
     
     
-    def step(self, action):
+    def step(self, action, agent):
         """
         step(action) takes in an action for the current agent (specified by
         agent_selection) and needs to update
@@ -153,27 +159,5 @@ class MAJspEnv():
         - agent_selection (to the next agent)
         And any internal state used by observe() or render()
         """
-        if self.dones[self.agent_selection]:
-            # handles stepping an agent which is already done
-            # accepts a None action for the one agent, and moves the agent_selection to
-            # the next done agent,  or if there are no more done agents, to the next live agent
-            return self._was_done_step(action)
-        
-        agent = self.agent_selection
-        
-        # the agent which stepped last had its _cumulative_rewards accounted for
-        # (because it was returned by last()), so the _cumulative_rewards for this
-        # agent should start again at 0
-        self._cumulative_rewards[agent] = 0
-        
-        # stores action of current agent
-        self.state[self.agent_selection] = action
-        
-        # collect reward if it is thie Last agent to act
-        if self._agent_selector.is_last():
-            # reward for all agents are placed in the .reward dictionary
-            for agent in self.agents:
-                self.rewards[agent] = PyGame2D.evaluate(agent)
-                
-            # update dones for all agents
-            self.dones = 
+        # agent 传进来是一个智能体，job对象应该在self里定义好，agent和action传进来之后更新self里的job
+        self.

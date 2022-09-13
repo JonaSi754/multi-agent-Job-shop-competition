@@ -1,4 +1,5 @@
 from statistics import mean
+from gym.spaces import Discrete
 import pygame
 import numpy as np
 
@@ -29,6 +30,7 @@ class Workpiece:
         self.cur = 0      # next op no.
         self.progress = 0.0 # percentage of job
         self.condition = 0  # condition flag for wait or processing
+        self.timer = 0      # count time for each op
         self.wait_time = 0  # time has been cost to wait
         self.next_op_cost = self.process_time[self.cur]
         
@@ -36,8 +38,28 @@ class Workpiece:
     def draw(self, screen):
         screen.blit(self.surface, self.pos)
         
-    def update(self, gap):
-        self.speed = gap / self.process_time[self.cur]
+    def update(self, gap, cur_machine, next_machine):
+        if self.condition == 1:   # only update when job is being processed
+            self.timer += 1
+            self.speed = gap / self.next_op_cost
+            self.pos[1] += self.speed
+            
+            if self.timer == self.next_op_cost:  # judge if this op has done
+                self.cur += 1
+                self.progress += 1.0 / len(self.process_time)
+                if self.cur == len(self.process_time):  # judge if all ops have done
+                    return True
+                else:
+                    self.progress = 0
+                    self.condition = 0
+                    cur_machine.job_list.remove(self)
+                    next_machine.job_list.append(self)
+                    self.timer = 0
+                    
+        else:
+            self.wait_time += 1
+            
+        return False
         
         
             
@@ -53,10 +75,11 @@ class Workpiece:
         
 
 class Machine:
-    def __init__(self, machine_img, pos, joblist):
+    def __init__(self, machine_img, pos, joblist, No):
         self.surface = pygame.image.load(machine_img)
         self.surface = pygame.transform.scale(self.surface, (20, 20))
         self.pos = pos
+        self.No = No
         self.job_list = joblist
         self.num_wait = len(joblist)
         self.possessed_time = 0
@@ -92,7 +115,7 @@ class PyGame2D:
             self.jobs.append(Workpiece('images\job_img.png', _init_pos_job, job))
             _init_pos_job[0] += _gap_job
         for i in range(self.num_machines):
-            self.machiens.append(Machine('images\machine_img.png', _init_pos_machine, job))
+            self.machiens.append(Machine('images\machine_img.png', _init_pos_machine, job, i))
             _init_pos_machine[1] += _gap_machine
             
         # env info
