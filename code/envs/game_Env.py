@@ -166,8 +166,14 @@ class MAJspEnv():
         # agent should start again at 0
         self._cumulative_rewards[agent] = 0
         
+        # stores action of current agent
+        self.state[self.agent_selection] = action
+        
         # collect reward if it is thie Last agent to act
         if self._agent_selector.is_last():
             # reward for all agents are placed in the .reward dictionary
             for agent in self.agents:
                 self.rewards[agent] = PyGame2D.evaluate(agent)
+                
+            # update dones for all agents
+            self.dones = 

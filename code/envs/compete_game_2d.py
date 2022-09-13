@@ -21,7 +21,7 @@ class Workpiece:
         self.endTime = []
         self.process_time = job.process_time
         self.machine_arrange = job.machine_arrange
-        self.speed = 100 / self.process_time[self.cur]
+        self.speed = 0
         
         # state info
         self.stakes = 20  # total stakes
@@ -36,9 +36,10 @@ class Workpiece:
     def draw(self, screen):
         screen.blit(self.surface, self.pos)
         
-    def update(self):
-        if self.condition == 1:
-            self.pos[1] += self.speed
+    def update(self, gap):
+        self.speed = gap / self.process_time[self.cur]
+        
+        
             
     def place_bets(self, action):
         self.bets = min(action, self.stakes)
@@ -86,6 +87,7 @@ class PyGame2D:
         _init_pos_machine = [_side_len * 5, _side_len]
         _gap_job = (screen_height - _side_len * 6) // self.num_machines
         _gap_machine = (screen_height - _side_len * 11) // len(jobs)
+        self.gap = _gap_machine
         for job in jobs:
             self.jobs.append(Workpiece('images\job_img.png', _init_pos_job, job))
             _init_pos_job[0] += _gap_job
