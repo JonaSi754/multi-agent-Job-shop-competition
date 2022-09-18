@@ -49,7 +49,7 @@ class MAJspEnv(AECEnv):
         "render_fps": 5,
     }
     
-    def __init__(self, jobs):
+    def __init__(self):
         """
         The init method takes in environment arguments and
          should define the following attributes:
@@ -61,8 +61,9 @@ class MAJspEnv(AECEnv):
         """
         
         self.pygame = PyGame2D()
-        self.jobs = jobs
-        self.num_agents = len(jobs)
+        self.jobs = self.pygame.jobs
+        self.machines = self.pygame.machines
+        self.num_agents = len(self.jobs)
         self.possible_agents = ["Job_" + str(j) for j in range(len(jobs))]
         self.agent_name_mapping = dict(
             zip(self.possible_agents, list(range(len(self.possible_agents))))
@@ -74,6 +75,8 @@ class MAJspEnv(AECEnv):
         self._observation_spaces = {agent: Discrete(11) for agent in self.possible_agents}
         # define the global space of environment or state
         self.state_space = Discrete(7)
+        
+        self.timer = -1
         
     
     
@@ -132,8 +135,11 @@ class MAJspEnv(AECEnv):
         self.infos = {agent: {} for agent in self.agents}
         self.state = {agent: None for agent in self.agents}
         self.observations = {agent: None for agent in self.agents}
+        self.timer = -1
         del self.pygame
         self.pygame = PyGame2D()
+        self.jobs = self.pygame.jobs
+        self.machines = self.pygame.machines
         
         """
         Agent_selector utility allows easy cyclic stepping through the agents list.
@@ -160,4 +166,4 @@ class MAJspEnv(AECEnv):
         And any internal state used by observe() or render()
         """
         # agent 传进来是一个智能体，job对象应该在self里定义好，agent和action传进来之后更新self里的job
-        self.
+        self.timer += 1
